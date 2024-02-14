@@ -36,6 +36,37 @@ class TransactionManager:
                     print("Invalid category number. Please try again.")
             except ValueError:
                 print("Invalid input. Please enter a number.")
+    
+    def get_summary(self, start_date, end_date):
+        total_income = 0
+        total_expense = 0
+
+        with open(self.csv_file, 'r', newline='') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header row
+            for row in reader:
+                date = datetime.strptime(row[3], '%Y-%m-%d %H:%M:%S')
+                if start_date <= date <= end_date:
+                    amount = float(row[0])
+                    if amount > 0:
+                        total_income += amount
+                    else:
+                        total_expense += amount
+
+        savings = total_income + total_expense
+        return total_income, total_expense, savings
+
+    def display_summary(self):
+        print("Enter the start date (YYYY-MM-DD):")
+        start_date = datetime.strptime(input(), '%Y-%m-%d')
+        print("Enter the end date (YYYY-MM-DD):")
+        end_date = datetime.strptime(input(), '%Y-%m-%d')
+
+        total_income, total_expense, savings = self.get_summary(start_date, end_date)
+
+        print(f"Total Income: ${total_income:.2f}")
+        print(f"Total Expenses: ${total_expense:.2f}")
+        print(f"Savings: ${savings:.2f}")
 
 
 
@@ -48,6 +79,5 @@ class TransactionManager:
 # category = transaction_manager.get_category_choice()
 
 # transaction_manager.record_transaction(amount, description, category)
-
-
-
+        
+# transaction_manager.display_summary()
